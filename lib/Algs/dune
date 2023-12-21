@@ -1,0 +1,5 @@
+(library
+ (name Algs)
+ (libraries Basis core)
+ (preprocess (pps ppx_deriving.show))
+)

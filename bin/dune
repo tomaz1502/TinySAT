@@ -1,0 +1,7 @@
+(executable
+ (public_name TinySAT)
+ (name main)
+ (promote (until-clean))
+ (libraries TinySAT num)
+ ; (flags -w -32)
+)
