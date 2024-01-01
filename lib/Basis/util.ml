@@ -24,6 +24,11 @@ let rec drop_while (p: 'a -> bool) (xs: 'a list) : 'a list =
     | []     -> []
     | x::xs' -> if p x then drop_while p xs' else x::xs'
 
+let map_inplace (f : 'a -> 'a) (xs: 'a array) : unit =
+    for i = 0 to Array.length xs - 1 do
+        Array.unsafe_set xs i (f (Array.unsafe_get xs i))
+    done
+
 let comp f g = fun x -> f (g x)
 
 let int_of_string_opt' x =
