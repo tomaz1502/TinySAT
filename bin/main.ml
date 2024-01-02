@@ -1,40 +1,30 @@
 open Algs.Brute_force
-(* open Basis.Types *)
-(* open Basis.Angstrom_parser *)
 open Basis.Util
 open Basis.Parser
 (* open Algs.Dpll *)
 
-(* let _p1 = *)
-(*     { form = [||]; *)
-(*       n_vars = 0; *)
-(*       _n_clauses = 0; *)
-(*     } *)
+let input_file = ref ""
+let output_file = ref ""
+let usage_msg = "tinysat --input=<path/to/input> [--output=<path/to/output>]"
 
-(* let _p2 = *)
-(*     { form = [| [|1|]; [|-1|] |]; *)
-(*       n_vars = 1; *)
-(*       _n_clauses = 2; *)
-(*     } *)
+let others = fun _ -> 
+  print_endline "Unexpected command line argument.";
+  print_endline ("Usage: " ^ usage_msg);
+  exit 1;;
 
-(* let _p3 = *)
-(*     { form = [| [|1|]; [|-2|] |]; *)
-(*       n_vars = 2; *)
-(*       _n_clauses = 2; *)
-(*     } *)
-
-(* let _p4 = *)
-(*     { form = [| [|1; 2; -3|]; [|-2; 3|] |]; *)
-(*       n_vars = 3; *)
-(*       _n_clauses = 2; *)
-(*     } *)
+let speclist =
+  [ ("--input", Arg.Set_string input_file, "Path to input DIMACS file.")
+  ; ("--output", Arg.Set_string output_file,
+     "[Optional] Output file. If no file is specified, the output will be printed in stdout.")
+  ]
 
 let () =
-    let input = read_file "./data/ex_02.dimacs" in
-    let d = dimacs_from_string input in
-    match d with
-    | Ok d ->
-        brute_force d |>
-        pp_sat |>
-        print_endline
-    | Error e -> failwith ("[Parser]: " ^ e)
+  Arg.parse speclist others usage_msg;
+  let input = read_file !input_file in
+  let d = dimacs_from_string input in
+  match d with
+  | Ok d ->
+      brute_force d |>
+      pp_sat |>
+      print_endline
+  | Error e -> failwith ("[Parser]: " ^ e)
