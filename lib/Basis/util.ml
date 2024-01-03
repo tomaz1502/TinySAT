@@ -50,12 +50,14 @@ let rev_array arr =
     Array.init n (fun i -> arr.(n - i - 1))
 
 let pp_clause clause =
-  String.concat " v " (List.map string_of_int (Array.to_list clause))
+    Array.to_list clause   |>
+    List.map string_of_int |>
+    String.concat " v "
 
 let pp_form form =
-    let form_s = Array.map (fun c -> "( " ^ pp_clause c ^ " )") form in
-    let s = Array.fold_right (fun curr acc -> curr ^ " ^ " ^ acc) form_s "" in
-    String.sub s 0 (String.length s - 3) (* trim the last ' ^ ' *)
+    Array.to_list form                            |>
+    List.map (fun c -> "( " ^ pp_clause c ^ " )") |>
+    String.concat " ^ "
 
 let pp_dimacs { form = form; n_vars = n_vars; _n_clauses = _n_clauses } =
     String.concat "\n"
@@ -64,3 +66,21 @@ let pp_dimacs { form = form; n_vars = n_vars; _n_clauses = _n_clauses } =
     ; "form = " ^ (pp_form form)
     ]
 
+let print_clause fmt c =
+    if Array.length c > 0 then
+        Format.fprintf fmt "%d" c.(0);
+    for i = 1 to Array.length c - 1 do
+        Format.fprintf fmt " v %d" c.(i)
+    done
+
+let print_form fmt form =
+    if Array.length form > 0 then
+        Format.fprintf fmt "(%a)" print_clause form.(0);
+    for i = 1 to Array.length form - 1 do
+        Format.fprintf fmt " ^ (%a)" print_clause form.(i);
+    done
+
+let print_dimacs fmt { form = form; n_vars = n_vars; _n_clauses = n_clauses } =
+    Format.fprintf fmt "n_vars = %d\n" n_vars;
+    Format.fprintf fmt "n_clauses = %d\n" n_clauses;
+    Format.fprintf fmt "form = %a" print_form form
