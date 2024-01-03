@@ -1,6 +1,6 @@
-open Algs.Brute_force
 open Basis.Util
 open Basis.Parser
+(* open Algs.Brute_force *)
 (* open Algs.Dpll *)
 
 let input_file = ref ""
@@ -21,10 +21,8 @@ let speclist =
 let () =
   Arg.parse speclist others usage_msg;
   let input = read_file !input_file in
-  let d = dimacs_from_string input in
-  match d with
-  | Ok d ->
-      brute_force d |>
-      pp_sat |>
-      print_endline
-  | Error e -> failwith ("[Parser]: " ^ e)
+  match dimacs_from_string input with
+  | Ok dim ->
+      Format.printf "Input:\n%a" print_dimacs dim
+  | Error err ->
+      Format.printf "[Parsing Error]: %s" err
