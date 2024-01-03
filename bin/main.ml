@@ -23,6 +23,6 @@ let () =
   let input = read_file !input_file in
   match dimacs_from_string input with
   | Ok dim ->
-      Format.printf "Input:\n%a" print_dimacs dim
+    Format.printf "Input:\n%a" print_dimacs dim
   | Error err ->
-      Format.printf "[Parsing Error]: %s" err
+    Format.printf "[Parsing Error]: %s" err

@@ -19,24 +19,25 @@ module SI = Set.Make(Int)
 type clause = SI.t
 
 let pp_clause (c: clause) =
-    let join curr acc = string_of_int curr ^ " v " ^ acc in
-    let s = SI.fold join c "" in
-    if String.length s >= 3 then
-      String.sub s 0 (String.length s - 3) (* trim the last ' v ' *)
-    else s
+  let join curr acc = string_of_int curr ^ " v " ^ acc in
+  let s = SI.fold join c "" in
+  if String.length s >= 3 then
+    String.sub s 0 (String.length s - 3) (* trim the last ' v ' *)
+  else s
 
 type formula = clause array
 
 let pp_form (f: formula) =
-    let form_s = Array.map (fun c -> "( " ^ pp_clause c ^ " )") f in
-    let s = Array.fold_right (fun curr acc -> curr ^ " ^ " ^ acc) form_s "" in
-    if String.length s >= 3 then
-      String.sub s 0 (String.length s - 3) (* trim the last ' ^ ' *)
-    else s
+  let form_s = Array.map (fun c -> "( " ^ pp_clause c ^ " )") f in
+  let s = Array.fold_right (fun curr acc -> curr ^ " ^ " ^ acc) form_s "" in
+  if String.length s >= 3 then
+    String.sub s 0 (String.length s - 3) (* trim the last ' ^ ' *)
+  else s
 
-type dpll_input = { form: formula
-                  ; n_vars: int
-                  }
+type dpll_input =
+  { form: formula
+  ; n_vars: int
+  }
 
 let set_of_arr (arr: lit array): SI.t =
   SI.of_list (to_list arr)

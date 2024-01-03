@@ -2,12 +2,12 @@ open Angstrom
 open Types
 
 let is_digit = function
-    | '0'..'9' -> true
-    | _        -> false
+  | '0'..'9' -> true
+  | _        -> false
 
 let is_white_space = function
-    | ' ' -> true
-    | _   -> false
+  | ' ' -> true
+  | _   -> false
 
 let nat_p = take_while1 is_digit
 
@@ -17,26 +17,26 @@ let lit_p =
   peek_char >>= function
   | None -> fail "sorry"
   | Some '-' ->
-      advance 1 *>
-      take_while1 is_digit >>= fun s ->
-      return (- (int_of_string s))
+    advance 1 *>
+    take_while1 is_digit >>= fun s ->
+    return (- (int_of_string s))
   | Some _   ->
-      take_while1 is_digit >>= fun s ->
-      if s = "0" then fail "done"
-      else return (int_of_string s)
+    take_while1 is_digit >>= fun s ->
+    if s = "0" then fail "done"
+    else return (int_of_string s)
 
 let clause_p = many1 (lit_p <* white_space_p)
 
 let between_clauses_p =
+  peek_char >>= function
+  | None -> return ()
+  | Some '0' -> begin
+    advance 1 *>
     peek_char >>= function
-    | None -> return ()
-    | Some '0' -> begin
-        advance 1 *>
-        peek_char >>= function
-        | None   -> return ()
-        | Some _ -> advance 1 *> return ()
-        end
-    | Some _    -> fail ""
+    | None   -> return ()
+    | Some _ -> advance 1 *> return ()
+    end
+  | Some _    -> fail ""
 
 let dimacs_p =
   advance 6 *> (* 'p cnf ' *)
