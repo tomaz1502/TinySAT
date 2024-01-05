@@ -45,6 +45,9 @@ let pp_sat = function
   | true  -> "SAT"
   | false -> "UNSAT"
 
+let print_sat fmt b = 
+  Format.fprintf fmt "%s" (if b then "SAT" else "UNSAT")
+
 let rev_array arr =
   let n = Array.length arr in
   Array.init n (fun i -> arr.(n - i - 1))

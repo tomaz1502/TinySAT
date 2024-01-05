@@ -1,5 +1,4 @@
 open Basis.Types
-open Basis.Util
 
 let eval (tbl: assignment) (l: lit) =
   assert (l <> 0);
