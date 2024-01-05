@@ -3,6 +3,7 @@ open Basis.Parser
 open Algs.Brute_force
 (* open Algs.Dpll *)
 
+
 type mode =
     Parse
   | Solve
@@ -27,11 +28,17 @@ let speclist =
 let () =
   Arg.parse speclist others usage_msg;
   let input = read_file !input_file in
+  let output_chan =
+    match !output_file with
+    | "" -> stdout
+    | _ -> open_out !output_file
+  in
+  Format.set_formatter_out_channel output_chan;
   match dimacs_from_string input with
   | Ok dim -> begin
     match !exec_mode with
     | Parse ->
-        Format.printf "Input:\n%a" print_dimacs dim;
+        Format.printf "Input:\n%a\n" print_dimacs dim;
     | Solve ->
       brute_force dim |>
       Format.printf "%a@\n" print_sat
