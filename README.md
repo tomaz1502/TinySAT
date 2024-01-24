@@ -7,6 +7,7 @@ Next steps:
     + [ ] Brute Force
     + [ ] DPLL
     + [ ] CDCL
+    + [ ] BDD
   - Tests
   - Parse DIMACS
   - Command line interface
