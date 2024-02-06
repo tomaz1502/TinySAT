@@ -5,11 +5,11 @@
 (generate_opam_files true)
 
 (source
- (github username/reponame))
+ (github tomaz1502/TinySAT))
 
-(authors "Author Name")
+(authors "Tomaz Mascarenhas")
 
-(maintainers "Maintainer Name")
+(maintainers "Tomaz Mascarenhas")
 
 (license LICENSE)
 
@@ -17,10 +17,9 @@
 
 (package
  (name TinySAT)
- (synopsis "A short synopsis")
- (description "A longer description")
+ (synopsis "This is a toy SAT solver I am implementing in order to learn OCaml.")
+ (description "This is a toy SAT solver I am implementing in order to learn OCaml.")
  (depends ocaml dune)
- (tags
-  (topics "to describe" your project)))
+)
 
 ; See the complete stanza docs at https://dune.readthedocs.io/en/stable/dune-files.html#dune-project
