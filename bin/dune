@@ -3,5 +3,4 @@
  (name main)
  (promote (until-clean))
  (libraries TinySAT)
- ; (flags -w -32)
 )

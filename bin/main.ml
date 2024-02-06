@@ -3,10 +3,7 @@ open Basis.Parser
 open Algs.Brute_force
 (* open Algs.Dpll *)
 
-
-type mode =
-    Parse
-  | Solve
+type mode = Parse | Solve
 
 let exec_mode = ref Solve
 let input_file = ref ""
