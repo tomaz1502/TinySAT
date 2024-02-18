@@ -18,8 +18,10 @@ let brute_force (p: dimacs): bool =
       tbl.(i) <- false;
       let s1 = loop (i + 1) tbl in
       tbl.(i) <- true;
-      let s2 = loop (i + 1) tbl in
-      s1 || s2
+      if s1 then true
+      else
+        let s2 = loop (i + 1) tbl in
+        s2
     end
   in
   let tbl = Array.make (p.n_vars + 1) false in

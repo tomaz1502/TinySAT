@@ -2,6 +2,15 @@ open Stdlib.Scanf
 open Types
 open Util
 
+let int_of_string' s =
+  try
+    int_of_string s
+  with
+    Failure(_) as e ->
+      Printf.printf "failed for: %s\n" s;
+      raise e
+
+
 let dimacs_from_string (input : string) : (dimacs, string) result =
   let lines = String.split_on_char '\n' input in
   let lines =
@@ -10,19 +19,18 @@ let dimacs_from_string (input : string) : (dimacs, string) result =
   | [] -> Error "unexpected input"
   | header::clauses ->
     try
-      let (n_vars, n_clauses) =
-        sscanf header "p cnf %d %d" (fun x y -> x, y) in
+      let (n_vars, n_clauses) = sscanf header "p cnf %d %d" (fun x y -> x, y) in
+      Printf.printf "input length : %d\n" (List.length clauses);
       let clauses =
-        String.concat " " clauses |>
-        String.split_on_char '0' in
-      let join curr acc =
-        let clause = scan_int_list curr in
-        if is_empty_list clause then
-          acc
-        else (Array.of_list clause) :: acc in
-      let clauses_list = List.fold_right join clauses [] in
+        String.concat " " clauses      |>
+        String.split_on_char ' '       |>
+        List.filter (fun s -> s <> "") |>
+        split_list_on_elem "0"         |>
+        List.map (List.map int_of_string')
+      in
+      Printf.printf "clauses length: %d\n" (List.length clauses);
       Ok
-        { form       = Array.of_list clauses_list
+        { form       = Array.of_list (List.map Array.of_list clauses)
         ; n_vars     = n_vars
         ; _n_clauses = n_clauses
         } 

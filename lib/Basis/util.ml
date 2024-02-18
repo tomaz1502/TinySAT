@@ -15,9 +15,9 @@ let read_file (file_name: string) : string =
   close_in chan;
   String.concat "\n" result
 
-let is_empty_list = function
-  | [] -> true
-  | _::_ -> false
+let is_not_empty_list = function
+  | [] -> false
+  | _::_ -> true
 
 let rec drop_while (p: 'a -> bool) (xs: 'a list) : 'a list =
   match xs with
@@ -30,6 +30,20 @@ let map_inplace (f : 'a -> 'a) (xs: 'a array) : unit =
   done
 
 let comp f g = fun x -> f (g x)
+
+let split_list_on_elem elem list =
+  let rec go elem acc list =
+    match list with
+      | [] -> acc
+      | hd :: tl ->
+          if hd = elem then
+            go elem ([] :: acc) tl
+          else
+            match acc with
+              | [] -> go elem [[hd]] tl
+              | hd_acc :: tl_acc -> go elem ((hd :: hd_acc) :: tl_acc) tl
+  in
+  go elem [] list |> List.filter is_not_empty_list |> List.rev |> List.map List.rev
 
 let int_of_string_opt' x =
   match int_of_string_opt x with
