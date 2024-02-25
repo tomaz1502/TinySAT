@@ -4,18 +4,9 @@ open Basis.Types
 open Basis.Util
 open Array
 
-(* Using Stdlib for now. TODO: change to Core *)
 module SI = Set.Make(Int)
-(* module SI_pp = struct *)
-(*   module SI = Set.Make(Int) *)
-(*   type t = SI.t *)
-(*   let pp (s: SI.t): string = *)
-(*     SI.fold (fun i s -> string_of_int i ^ " " ^ s) s " " *)
-(* end *)
 
 (* TODO: We should parameterize the algo modules by the representation of formulas *)
-
-(* type clause = SI_pp.t [@@deriving show] *)
 type clause = SI.t
 
 let pp_clause (c: clause) =
@@ -64,17 +55,63 @@ let get_pure_lits (input: dpll_input): int list =
   done;
   !lits
 
-let filter (p: 'a -> bool) (arr: 'a array) (def: 'a): 'a array =
-  let new_len = fold_left (fun cnt x -> if p x then cnt + 1 else cnt) 0 arr in
-  let new_arr = make new_len def in
-  let it = ref 0 in
-  for i = 0 to length arr - 1 do
-    if p arr.(i) then begin
-      new_arr.(!it) <- arr.(i);
-      it := !it + 1
-    end
+let filter (p: 'a -> bool) (arr: 'a array): 'a array =
+  let res = ref [] in
+  for i = Array.length arr - 1 downto 0 do
+    if p arr.(i) then
+      res := arr.(i) :: !res;
   done;
-  new_arr
+  Array.of_list !res
+
+let get_unit_lits: formula -> int list = fun f ->
+  let unit_clauses = ref [] in
+  for i = Array.length f - 1 downto 0 do
+    if SI.cardinal f.(i) = 1 then
+      unit_clauses := SI.min_elt f.(i) :: !unit_clauses;
+  done;
+  !unit_clauses
+
+(* If l is positive assign true, if l is negative, assign false *)
+let assign (l: lit) (form: formula): formula =
+  let res = ref [] in
+  for i = 0 to Array.length form - 1 do
+    if not (SI.mem l form.(i)) then
+      res := SI.remove (-l) form.(i) :: !res;
+  done;
+  Array.of_list !res
+
+let rec run' (input: dpll_input): bool =
+  let form = input.form in
+  let n_vars = input.n_vars in
+  if Array.length form = 0 then true
+  else if Array.mem SI.empty form then false
+  else
+    match get_unit_lits form with
+      | _::_ as u_lits ->
+          (* Unit Propagation *)
+          let rem_set = SI.of_list (List.map (fun i -> -i) u_lits) in
+          map_inplace (fun c -> SI.diff c rem_set) form;
+          if Array.mem SI.empty form then false
+          else
+            let new_form = filter (fun c -> SI.cardinal c > 1) form in
+            run' { form = new_form; n_vars = n_vars }
+      | [] -> begin
+        match get_pure_lits input with
+          | _::_ as p_lits -> 
+              let rem_set = SI.of_list p_lits in
+              let new_form = filter (fun c -> SI.is_empty (SI.inter c rem_set)) form in
+              (* Pure literal elimination *)
+              run' { form = new_form; n_vars = n_vars }
+          | [] -> begin
+            let l = SI.min_elt form.(0) in
+            let try_pos = run' { form = assign l form; n_vars = n_vars } in
+            if try_pos then
+              true
+            else 
+              let try_neg = run' { form = assign (-l) form; n_vars = n_vars } in
+              try_neg
+          end
+      end
 
 (* TODO: retrieve assignment in SAT case *)
 let rec run (input: dpll_input): bool =
@@ -82,7 +119,7 @@ let rec run (input: dpll_input): bool =
   match get_unit_clause input.form with
   | Some n ->
     (* Unit propagation *)
-    let new_form = filter (fun c -> c <> SI.singleton n) input.form SI.empty in
+    let new_form = filter (fun c -> c <> SI.singleton n) input.form in
     let bad = ref false in
     iteri (fun i c ->
       if SI.mem (-n) c then
@@ -98,13 +135,13 @@ let rec run (input: dpll_input): bool =
     let pure_lits = get_pure_lits input in
     let upd l = map_inplace (SI.remove l) input.form in
     List.iter upd pure_lits;
-    let new_form = filter (fun c -> c <> SI.empty) input.form SI.empty in
+    let new_form = filter (fun c -> c <> SI.empty) input.form in
     if length new_form = 0 then
       true
     else
       let l = SI.min_elt new_form.(0) in
       let try_assign l =
-        let assigned_form = filter (comp not (SI.mem l)) new_form SI.empty in
+        let assigned_form = filter (comp not (SI.mem l)) new_form in
         iteri (fun i c -> assigned_form.(i) <- SI.remove (-l) c) assigned_form;
         if length assigned_form = 0 then
           true
@@ -118,4 +155,4 @@ let rec run (input: dpll_input): bool =
       s1 || s2
 
 let dpll (d : dimacs) : bool =
-  cast_dimacs d |> run
+  cast_dimacs d |> run'
