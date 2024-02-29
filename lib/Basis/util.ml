@@ -43,7 +43,10 @@ let split_list_on_elem elem list =
               | [] -> go elem [[hd]] tl
               | hd_acc :: tl_acc -> go elem ((hd :: hd_acc) :: tl_acc) tl
   in
-  go elem [] list |> List.filter is_not_empty_list |> List.rev |> List.map List.rev
+  go elem [] list               |>
+  List.filter is_not_empty_list |>
+  List.rev                      |>
+  List.map List.rev
 
 let int_of_string_opt' x =
   match int_of_string_opt x with

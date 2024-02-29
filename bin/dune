@@ -1,5 +1,5 @@
 (executable
- (public_name main)
+ (public_name tinysat)
  (name main)
  (promote (until-clean))
  (libraries TinySAT)

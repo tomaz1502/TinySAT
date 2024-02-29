@@ -5,7 +5,8 @@ open Basis.Util
 
 module SI = Set.Make(Int)
 
-(* TODO: We should parameterize the algo modules by the representation of formulas *)
+(* TODO: We should parameterize the algo modules by the representation of
+formulas *)
 type clause = SI.t
 
 type formula = clause array
