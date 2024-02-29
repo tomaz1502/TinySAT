@@ -1,5 +1,5 @@
 (library
- (name TinySAT)
- (libraries Basis Algs)
+ (name Lib)
 )
 
+(include_subdirs qualified)

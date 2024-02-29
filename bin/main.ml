@@ -1,7 +1,8 @@
-open Basis.Util
-open Basis.Parser
-open Algs.Brute_force
-open Algs.Dpll
+open Lib.Util
+open Lib.Parser
+open Lib.Defs
+open Lib.Algs
+
 
 type mode = Parse | Solve
 type algo = Dpll | Brute_force
@@ -34,15 +35,8 @@ let speclist =
   ]
 
 
-module I =
-  struct
-    type literal = int
-    type clause = literal array
-    type t = clause array
-
-  end
-
-module B = Brute_force (I)
+module B = Brute_force.Make (I_arr_arr)
+module D = Dpll.Make (I_arr_arr)
 
 let () =
   Arg.parse speclist unexpected_cmd usage_msg;
@@ -50,19 +44,19 @@ let () =
   let output_chan =
     match !output_file with
     | "" -> stdout
-    | _ -> open_out !output_file
+    | _  -> open_out !output_file
   in
   Format.set_formatter_out_channel output_chan;
   match dimacs_from_string input with
-  | Ok dim -> begin
+  | Ok inp -> begin
     match !exec_mode with
     | Parse ->
-        Format.printf "Input:\n%a\n" print_dimacs dim;
+        Format.printf "Input:\n%a\n" print_input inp;
     | Solve ->
         let solution =
           match !chosen_algo with
-          | Dpll -> dpll dim
-          | Brute_force -> B.solve dim.form
+          | Dpll -> D.solve inp
+          | Brute_force -> B.solve inp
         in
         Format.printf "%a@\n" print_sat solution
     end

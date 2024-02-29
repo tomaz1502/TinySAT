@@ -1,4 +1,0 @@
-(library
- (name Algs)
- (libraries Basis)
-)

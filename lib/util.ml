@@ -1,4 +1,4 @@
-open Types
+open Defs
 
 exception UnexpectedInput
 
@@ -19,12 +19,12 @@ let is_not_empty_list = function
   | [] -> false
   | _::_ -> true
 
-let rec drop_while (p: 'a -> bool) (xs: 'a list) : 'a list =
+let rec drop_while (p: 'a -> bool) (xs : 'a list) : 'a list =
   match xs with
   | []     -> []
   | x::xs' -> if p x then drop_while p xs' else x::xs'
 
-let map_inplace (f : 'a -> 'a) (xs: 'a array) : unit =
+let map_inplace (f : 'a -> 'a) (xs : 'a array) : unit =
   for i = 0 to Array.length xs - 1 do
     Array.unsafe_set xs i (f (Array.unsafe_get xs i))
   done
@@ -79,11 +79,10 @@ let pp_form form =
   List.map (fun c -> "( " ^ pp_clause c ^ " )") |>
   String.concat " ^ "
 
-let pp_dimacs { form = form; n_vars = n_vars; _n_clauses = _n_clauses } =
+let pp_input { formula; n_vars } =
   String.concat "\n"
   [ "n_vars = " ^ (string_of_int n_vars)
-  ; "n_clauses = " ^ (string_of_int _n_clauses)
-  ; "form = " ^ (pp_form form)
+  ; "form = " ^ (pp_form formula)
   ]
 
 let print_clause fmt c =
@@ -100,7 +99,6 @@ let print_form fmt form =
     Format.fprintf fmt " ^ (%a)" print_clause form.(i);
   done
 
-let print_dimacs fmt { form = form; n_vars = n_vars; _n_clauses = n_clauses } =
+let print_input fmt { formula; n_vars } =
   Format.fprintf fmt "n_vars = %d\n" n_vars;
-  Format.fprintf fmt "n_clauses = %d\n" n_clauses;
-  Format.fprintf fmt "form = %a" print_form form
+  Format.fprintf fmt "form = %a" print_form formula
