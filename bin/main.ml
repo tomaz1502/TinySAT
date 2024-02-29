@@ -33,6 +33,17 @@ let speclist =
        `brute_force`. Default is `dpll`.")
   ]
 
+
+module I =
+  struct
+    type literal = int
+    type clause = literal array
+    type t = clause array
+
+  end
+
+module B = Brute_force (I)
+
 let () =
   Arg.parse speclist unexpected_cmd usage_msg;
   let input = read_file !input_file in
@@ -51,7 +62,7 @@ let () =
         let solution =
           match !chosen_algo with
           | Dpll -> dpll dim
-          | Brute_force -> brute_force dim
+          | Brute_force -> B.solve dim.form
         in
         Format.printf "%a@\n" print_sat solution
     end

@@ -13,4 +13,3 @@ type dimacs =
     _n_clauses: int
   }
 
-type assignment = bool array;;
