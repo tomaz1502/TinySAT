@@ -27,7 +27,7 @@ open Lib.Defs
 (*   done; *)
 (*   Array.of_list !res *)
 
-module Make(I : Input_format) : Solver =
+module Make(I : Input_format): Solver(I).M =
   struct
     (* let get_pure_lits (input: parsed_input): int list = *)
     (*   let occ: bool array = Array.make (2 * input.n_vars) false in *)
@@ -63,7 +63,7 @@ module Make(I : Input_format) : Solver =
     (*   Array.of_list !res *)
 
     (* TODO: retrieve assignment in SAT case *)
-    let solve (_input: parsed_input): bool = true
+    let solve _ _ : bool = true
       (* let form = input.form in *)
       (* let n_vars = input.n_vars in *)
       (* if Array.length form = 0 then true *)

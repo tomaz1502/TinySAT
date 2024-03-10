@@ -1,6 +1,7 @@
 open Lib.Defs
 
-module Make(I : Input_format with type literal := int): Solver =
+(* TODO: is it possible to make a module type for this? *)
+module Make(I : Input_format): Solver(I).M =
   struct
     let eval tbl l =
       assert (l <> 0);
@@ -12,10 +13,9 @@ module Make(I : Input_format with type literal := int): Solver =
     let check_assignment f tbl =
       I.fold_formula (fun acc curr -> acc && check_clause curr tbl) true f
 
-    let solve inp =
-      let formula = I.cast inp in
+    let solve formula n_vars =
       let rec loop i tbl =
-        if i > inp.n_vars then
+        if i > n_vars then
           check_assignment formula tbl
         else begin
           tbl.(i) <- false;
@@ -28,6 +28,6 @@ module Make(I : Input_format with type literal := int): Solver =
           end
         end
       in
-      let tbl = Array.make (inp.n_vars + 1) false in
+      let tbl = Array.make (n_vars + 1) false in
       loop 1 tbl
   end

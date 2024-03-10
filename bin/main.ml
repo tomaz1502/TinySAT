@@ -3,7 +3,6 @@ open Lib.Parser
 open Lib.Defs
 open Algs
 
-
 type mode = Parse | Solve
 type algo = Dpll | Brute_force
 
@@ -34,7 +33,6 @@ let speclist =
        `brute_force`. Default is `dpll`.")
   ]
 
-
 module B = Brute_force.Make (I_arr_arr)
 module D = Dpll.Make (I_arr_arr)
 
@@ -55,8 +53,8 @@ let () =
     | Solve ->
         let solution =
           match !chosen_algo with
-          | Dpll -> D.solve inp
-          | Brute_force -> B.solve inp
+          | Dpll -> D.solve (I_arr_arr.cast_parsed_input inp) inp.n_vars
+          | Brute_force -> B.solve (I_arr_arr.cast_parsed_input inp) inp.n_vars
         in
         Format.printf "%a@\n" print_sat solution
     end
