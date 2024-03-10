@@ -2,5 +2,5 @@
  (public_name tinysat)
  (name main)
  (promote (until-clean))
- (libraries Lib)
+ (libraries Lib Algs)
 )

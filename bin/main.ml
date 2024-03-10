@@ -1,7 +1,7 @@
 open Lib.Util
 open Lib.Parser
 open Lib.Defs
-open Lib.Algs
+open Algs
 
 
 type mode = Parse | Solve

@@ -1,4 +1,4 @@
-open Defs
+open Lib.Defs
 
 module Make(I : Input_format with type literal := int): Solver =
   struct

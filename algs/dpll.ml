@@ -1,6 +1,6 @@
 (* Implementation of Davis–Putnam–Logemann–Loveland algorithm *)
 
-open Defs
+open Lib.Defs
 
 (* module SI = Set.Make(Int) *)
 

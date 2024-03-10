@@ -1,0 +1,4 @@
+(library
+ (name Algs)
+ (libraries Lib)
+)
