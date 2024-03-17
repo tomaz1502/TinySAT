@@ -8,4 +8,3 @@ type parsed_instance_data =
   { formula : parsed_formula
   ; n_vars  : int
   }
-

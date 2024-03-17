@@ -2,6 +2,7 @@
 
 open Lib.Parsed_struct
 open Lib.Util
+open Common
 
 module SI = Set.Make(Int)
 
@@ -62,18 +63,18 @@ let assign (l: literal) (form: formula): formula =
   Array.of_list !res
 
 (* TODO: retrieve assignment in SAT case *)
-let rec run (input: instance_data): bool =
+let rec run (input: instance_data): output =
   let form = input.formula in
   let n_vars = input.n_vars in
-  if Array.length form = 0 then true
-  else if Array.mem SI.empty form then false
+  if Array.length form = 0 then Ok ()
+  else if Array.mem SI.empty form then Error ()
   else
     match get_unit_lits form with
       | _::_ as u_lits ->
           (* Unit Propagation *)
           let rem_set = SI.of_list (List.map (fun i -> -i) u_lits) in
           map_inplace (fun c -> SI.diff c rem_set) form;
-          if Array.mem SI.empty form then false
+          if Array.mem SI.empty form then Error ()
           else
             let new_form = filter (fun c -> SI.cardinal c > 1) form in
             run { formula = new_form; n_vars = n_vars }
@@ -87,13 +88,11 @@ let rec run (input: instance_data): bool =
           | [] -> begin
             let l = SI.min_elt form.(0) in
             let try_pos = run { formula = assign l form; n_vars = n_vars } in
-            if try_pos then
-              true
-            else 
-              let try_neg = run { formula = assign (-l) form; n_vars = n_vars } in
-              try_neg
+            match try_pos with
+              | Ok _ -> Ok ()
+              | _ -> run { formula = assign (-l) form; n_vars = n_vars }
           end
       end
 
-let solve (pf: parsed_instance_data): bool =
+let solve (pf: parsed_instance_data): output =
   cast_input pf |> run

@@ -51,8 +51,9 @@ let () =
     | Parse ->
         Format.printf "Input:\n%a\n" print_input inp;
     | Solve ->
-        let solution = algo inp in
-        Format.printf "%a@\n" print_sat solution
+        match algo inp with
+          | Ok    _ -> Format.printf "SAT\n"
+          | Error _ -> Format.printf "UNSAT\n"
     end
   | Error err ->
     Format.printf "[Parsing Error]: %s" err
