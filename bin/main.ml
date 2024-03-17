@@ -1,7 +1,5 @@
 open Lib.Util
 open Lib.Parser
-open Lib.Defs
-open Algs
 
 type mode = Parse | Solve
 type algo = Dpll | Brute_force
@@ -33,9 +31,6 @@ let speclist =
        `brute_force`. Default is `dpll`.")
   ]
 
-module B = Brute_force.Make (I_arr_arr)
-module D = Dpll.Make (I_arr_arr)
-
 let () =
   Arg.parse speclist unexpected_cmd usage_msg;
   let input = read_file !input_file in
@@ -45,17 +40,18 @@ let () =
     | _  -> open_out !output_file
   in
   Format.set_formatter_out_channel output_chan;
+  let algo =
+    match !chosen_algo with
+      | Dpll -> Algs.Dpll.solve
+      | Brute_force -> Algs.Brute_force.solve
+  in
   match dimacs_from_string input with
   | Ok inp -> begin
     match !exec_mode with
     | Parse ->
         Format.printf "Input:\n%a\n" print_input inp;
     | Solve ->
-        let solution =
-          match !chosen_algo with
-          | Dpll -> D.solve (I_arr_arr.cast_parsed_input inp) inp.n_vars
-          | Brute_force -> B.solve (I_arr_arr.cast_parsed_input inp) inp.n_vars
-        in
+        let solution = algo inp in
         Format.printf "%a@\n" print_sat solution
     end
   | Error err ->

@@ -1,4 +1,4 @@
-open Defs
+open Parsed_struct
 
 exception UnexpectedInput
 
