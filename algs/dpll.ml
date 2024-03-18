@@ -62,37 +62,48 @@ let assign (l: literal) (form: formula): formula =
   done;
   Array.of_list !res
 
-(* TODO: retrieve assignment in SAT case *)
-let rec run (input: instance_data): output =
+let upd_tbl (tbl: bool array) (lit: literal): unit =
+  if lit < 0 then tbl.(-lit) <- false else tbl.(lit) <- true
+
+let rec run (tbl: bool array) (input: instance_data): bool =
   let form = input.formula in
   let n_vars = input.n_vars in
-  if Array.length form = 0 then Ok [||]
-  else if Array.mem SI.empty form then Error ()
+  if Array.length form = 0 then true
+  else if Array.mem SI.empty form then false
   else
     match get_unit_lits form with
       | _::_ as u_lits ->
           (* Unit Propagation *)
+          List.iter (upd_tbl tbl) u_lits;
           let rem_set = SI.of_list (List.map (fun i -> -i) u_lits) in
           map_inplace (fun c -> SI.diff c rem_set) form;
-          if Array.mem SI.empty form then Error ()
+          if Array.mem SI.empty form then false
           else
             let new_form = filter (fun c -> SI.cardinal c > 1) form in
-            run { formula = new_form; n_vars = n_vars }
+            run tbl { formula = new_form; n_vars = n_vars }
       | [] -> begin
         match get_pure_lits input with
           | _::_ as p_lits -> 
+              List.iter (upd_tbl tbl) p_lits;
               let rem_set = SI.of_list p_lits in
-              let new_form = filter (fun c -> SI.is_empty (SI.inter c rem_set)) form in
+              let new_form =
+                filter (fun c -> SI.is_empty (SI.inter c rem_set)) form in
               (* Pure literal elimination *)
-              run { formula = new_form; n_vars = n_vars }
+              run tbl { formula = new_form; n_vars = n_vars }
           | [] -> begin
             let l = SI.min_elt form.(0) in
-            let try_pos = run { formula = assign l form; n_vars = n_vars } in
-            match try_pos with
-              | Ok _ -> Ok [||]
-              | _ -> run { formula = assign (-l) form; n_vars = n_vars }
+            tbl.(l) <- true;
+            let try_pos =
+              run tbl { formula = assign l form; n_vars = n_vars } in
+            if try_pos then true
+            else begin
+              tbl.(l) <- false;
+              run tbl { formula = assign (-l) form; n_vars = n_vars }
+            end
           end
       end
 
 let solve (pf: parsed_instance_data): output =
-  cast_input pf |> run
+  let tbl = Array.make (pf.n_vars + 1) false in
+  let sat = cast_input pf |> run tbl in
+  if sat then Ok tbl else Error ()
