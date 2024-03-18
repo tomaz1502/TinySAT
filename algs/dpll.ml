@@ -66,7 +66,7 @@ let assign (l: literal) (form: formula): formula =
 let rec run (input: instance_data): output =
   let form = input.formula in
   let n_vars = input.n_vars in
-  if Array.length form = 0 then Ok ()
+  if Array.length form = 0 then Ok [||]
   else if Array.mem SI.empty form then Error ()
   else
     match get_unit_lits form with
@@ -89,7 +89,7 @@ let rec run (input: instance_data): output =
             let l = SI.min_elt form.(0) in
             let try_pos = run { formula = assign l form; n_vars = n_vars } in
             match try_pos with
-              | Ok _ -> Ok ()
+              | Ok _ -> Ok [||]
               | _ -> run { formula = assign (-l) form; n_vars = n_vars }
           end
       end

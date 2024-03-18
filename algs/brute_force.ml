@@ -11,19 +11,11 @@ let eval (tbl: bool array) (l: literal): bool =
   assert (l <> 0);
   if l < 0 then not (tbl.(-l)) else tbl.(l)
 
-let check_clause (c: clause) (tbl: bool array): output =
-  let aux acc curr =
-    if eval tbl curr then Ok () else acc
-  in
-  Array.fold_left aux (Error ()) c
+let check_clause (c: clause) (tbl: bool array): bool =
+  Array.fold_left (fun acc curr -> acc || eval tbl curr) false c
 
-let check_assignment (f: formula) (tbl: bool array): output =
-  let aux acc curr =
-    match acc with
-      | Error _ -> Error ()
-      | Ok _    -> check_clause curr tbl
-  in
-  Array.fold_left aux (Ok ()) f
+let check_assignment (f: formula) (tbl: bool array): bool =
+  Array.fold_left (fun acc curr -> acc && check_clause curr tbl) true f
 
 let solve (data: parsed_instance_data): output =
   let n_vars = data.n_vars in
@@ -34,12 +26,12 @@ let solve (data: parsed_instance_data): output =
     else begin
       tbl.(i) <- false;
       let s1 = loop (i + 1) tbl in
-      match s1 with
-        | Ok _ -> Ok ()
-        | Error _ ->
-            tbl.(i) <- true;
-            loop (i + 1) tbl
+      if s1 then true
+      else begin
+        tbl.(i) <- true;
+        loop (i + 1) tbl
+      end
     end
   in
   let tbl = Array.make (n_vars + 1) false in
-  loop 1 tbl
+  if loop 1 tbl then Ok tbl else Error ()
