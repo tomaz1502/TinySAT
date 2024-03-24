@@ -54,12 +54,13 @@ let get_unit_lits: formula -> int list = fun f ->
   !unit_clauses
 
 (* If l is positive assign true, if l is negative, assign false *)
-let assign (l: literal) (form: formula): formula =
+let assign (l: literal) (form: formula) (tbl: bool array): formula =
   let res = ref [] in
   for i = 0 to Array.length form - 1 do
     if not (SI.mem l form.(i)) then
       res := SI.remove (-l) form.(i) :: !res;
   done;
+  if l < 0 then tbl.(-l) <- false else tbl.(l) <- true;
   Array.of_list !res
 
 let upd_tbl (tbl: bool array) (lit: literal): unit =
@@ -91,15 +92,13 @@ let rec run (tbl: bool array) (input: instance_data): bool =
               (* Pure literal elimination *)
               run tbl { formula = new_form; n_vars = n_vars }
           | [] -> begin
-            let l = SI.min_elt form.(0) in
-            tbl.(l) <- true;
-            let try_pos =
-              run tbl { formula = assign l form; n_vars = n_vars } in
-            if try_pos then true
-            else begin
-              tbl.(l) <- false;
-              run tbl { formula = assign (-l) form; n_vars = n_vars }
-            end
+              let l = SI.min_elt form.(0) in
+              let try_pos =
+                run tbl { formula = assign l form tbl; n_vars = n_vars } in
+              if try_pos then true
+              else begin
+                run tbl { formula = assign (-l) form tbl; n_vars = n_vars }
+              end
           end
       end
 
