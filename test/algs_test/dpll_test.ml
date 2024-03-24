@@ -14,20 +14,21 @@ let sat_test_from_instance_name i_name =
     end
     | Error _ -> false
 
-let%test "sat1.dimacs should be SAT" =
+let%test "SAT certificate for sat1.dimacs" =
   sat_test_from_instance_name "sat1.dimacs"
 
-let%test "ex_00.dimacs should be SAT" =
+let%test "SAT certificate for ex_00.dimacs" =
   sat_test_from_instance_name "ex_00.dimacs"
 
-let%test "ex_01.dimacs should be SAT" =
+let%test "SAT certificate for ex_01.dimacs" =
   sat_test_from_instance_name "ex_01.dimacs"
 
-let%test "ex_02.dimacs should be SAT" =
+let%test "SAT certificate for ex_02.dimacs" =
   sat_test_from_instance_name "ex_02.dimacs"
 
-let%test "100vars_sat.dimacs should be SAT" =
+let%test "SAT certificate for 100vars_sat.dimacs" =
   sat_test_from_instance_name "100vars_sat.dimacs"
 
-let%test "uf20-01000.dimacs should be SAT" =
+let%test "SAT certificate for uf20-01000.dimacs" =
   sat_test_from_instance_name "uf20-01000.dimacs"
+
