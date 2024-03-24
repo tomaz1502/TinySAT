@@ -35,9 +35,7 @@ let () =
   Arg.parse speclist unexpected_cmd usage_msg;
   let input = read_file !input_file in
   let output_chan =
-    match !output_file with
-    | "" -> stdout
-    | _  -> open_out !output_file
+    if !output_file = String.empty then stdout else open_out !output_file
   in
   Format.set_formatter_out_channel output_chan;
   let algo =

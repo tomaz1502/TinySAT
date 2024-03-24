@@ -20,7 +20,6 @@ let dimacs_from_string (input : string) : (parsed_instance_data, string) result 
   | header::clauses ->
     try
       let n_vars = sscanf header "p cnf %d %d" (fun x _ -> x) in
-      Printf.printf "input length : %d\n" (List.length clauses);
       let clauses =
         String.concat " " clauses      |>
         String.split_on_char ' '       |>
@@ -28,7 +27,6 @@ let dimacs_from_string (input : string) : (parsed_instance_data, string) result 
         split_list_on_elem "0"         |>
         List.map (List.map int_of_string')
       in
-      Printf.printf "clauses length: %d\n" (List.length clauses);
       Ok
         { formula    = Array.of_list (List.map Array.of_list clauses)
         ; n_vars     = n_vars

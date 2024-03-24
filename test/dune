@@ -1,2 +1,6 @@
-(test
- (name test_TinySAT))
+(library
+ (name test_TinySAT)
+ (inline_tests)
+ (preprocess (pps ppx_inline_test))
+ (libraries Algs_test)
+)
