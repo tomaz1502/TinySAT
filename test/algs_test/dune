@@ -2,5 +2,5 @@
  (name Algs_test)
  (libraries Algs Lib)
  (preprocess (pps ppx_inline_test))
- (inline_tests (deps (glob_files data/*)))
+ (inline_tests (deps (glob_files ../sat_cases/*)))
 )
