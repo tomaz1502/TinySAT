@@ -59,11 +59,21 @@ let scan_int_list s =
   List.filter_map int_of_string_opt'
 
 let pp_sat = function
-  | true  -> "SAT"
-  | false -> "UNSAT"
+  | Ok _    -> "SAT"
+  | Error _ -> "UNSAT"
 
-let print_sat fmt b = 
-  Format.fprintf fmt "%s" (if b then "SAT" else "UNSAT")
+let print_sat fmt res = 
+  Format.fprintf fmt "%s\n" (if Result.is_ok res then "SAT" else "UNSAT")
+
+let print_assignment fmt assignment =
+  Format.fprintf fmt "Assignment:\n";
+  for i = 1 to Array.length assignment - 1 do
+    Format.fprintf fmt "%d -> %s\n" i (if assignment.(i) then "T" else "F");
+  done
+
+let print_cert fmt = function
+  | Ok assignment -> print_assignment fmt assignment
+  | Error _       -> failwith "unimplemented"
 
 let rev_array arr =
   let n = Array.length arr in
@@ -101,4 +111,4 @@ let print_form fmt form =
 
 let print_input fmt { formula; n_vars } =
   Format.fprintf fmt "n_vars = %d\n" n_vars;
-  Format.fprintf fmt "form = %a" print_form formula
+  Format.fprintf fmt "form = %a\n" print_form formula
