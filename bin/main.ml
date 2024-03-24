@@ -33,6 +33,7 @@ let speclist =
 
 let () =
   Arg.parse speclist unexpected_cmd usage_msg;
+  if !input_file = String.empty then unexpected_cmd ();
   let input = read_file !input_file in
   let output_chan =
     if !output_file = String.empty then stdout else open_out !output_file
