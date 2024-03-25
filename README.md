@@ -1,9 +1,6 @@
 # TinySAT
 
-A tiny proof producing SAT solver. The goal of this project is to help me learn OCaml
-and the process of modifying an algorithm to produce proof certificate of its results.
-Currently we are working on doing this modification on the brute force search and on
-DPLL.
+A tiny proof producing SAT solver.
 
 ## Road map:
   - [x] Parse DIMACS.
