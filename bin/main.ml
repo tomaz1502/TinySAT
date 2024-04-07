@@ -8,7 +8,7 @@ let exec_mode = ref Solve
 let chosen_algo = ref Dpll
 let input_file = ref ""
 let output_file = ref ""
-let usage_msg = "tinysat --input=<path/to/input> [--output=<path/to/output>] \
+let usage_msg = "tinysat <path/to/input> [--output=<path/to/output>] \
                 [--mode=<mode_name>] [--algo=<algo_name>]"
 
 let unexpected_cmd = fun _ -> 
@@ -16,9 +16,12 @@ let unexpected_cmd = fun _ ->
   print_endline ("Usage: " ^ usage_msg);
   exit 1;;
 
+let anon_fun str =
+  if !input_file <> "" then unexpected_cmd str
+  else input_file := str
+
 let speclist =
-  [ ("--input", Arg.Set_string input_file, "Path to input DIMACS file.")
-  ; ("--output", Arg.Set_string output_file,
+  [ ("--output", Arg.Set_string output_file,
        "[Optional] Output file. If no file is specified, the output will be \
        printed in stdout.")
   ; ("--mode", Arg.String (function 
@@ -37,7 +40,7 @@ let speclist =
   ]
 
 let () =
-  Arg.parse speclist unexpected_cmd usage_msg;
+  Arg.parse speclist anon_fun usage_msg;
   if !input_file = String.empty then unexpected_cmd ();
   let input = read_file !input_file in
   let output_chan =
