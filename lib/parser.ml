@@ -8,18 +8,18 @@ let int_of_string' s =
     int_of_string s
   with
     Failure(_) as e ->
-      Printf.printf "failed for: %s\n" s;
+      Printf.printf "int_of_string failed for: %s\n" s;
       raise e
 
 let dimacs_from_string (input : string) : (parsed_instance_data, string) result =
   let lines = String.split_on_char '\n' input in
-  let lines =
-    drop_while (comp not (String.starts_with ~prefix:"p cnf")) lines in
+  let lines = List.filter (comp not (String.starts_with ~prefix:"c")) lines in
   match lines with
   | [] -> Error "unexpected input"
   | header::clauses ->
     try
-      let n_vars = sscanf header "p cnf %d %d" (fun x _ -> x) in
+      let n_vars, n_clauses = sscanf header "p cnf %d %d" (fun x y -> (x, y)) in
+      let clauses = take n_clauses clauses in
       let clauses =
         String.concat " " clauses      |>
         String.split_on_char ' '       |>
