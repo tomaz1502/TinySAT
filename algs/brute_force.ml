@@ -1,4 +1,5 @@
 open Lib.Parsed_struct
+open Lib.Util
 open Certificate
 
 type clause = literal list
@@ -33,7 +34,7 @@ let resolve (r: literal) (c1: clause) (c2: clause) : clause =
   assert (List.mem (-r) c2);
   let c1' = List.filter (fun l -> l <> r) c1 in
   let c2' = List.filter (fun l -> l <> -r) c2 in
-  List.append c1' c2'
+  rem_dups (List.append c1' c2')
 
 let solve ({ n_vars; form }: parsed_instance_data): certificate =
   let form_list = Array.to_list (Array.map Array.to_list form) in
@@ -57,7 +58,7 @@ let solve ({ n_vars; form }: parsed_instance_data): certificate =
                         (* These lists are always non-empty *)
                         let c1 = List.hd cs1 in
                         let c2 = List.hd cs2 in
-                        if List.mem (-i) c1 && List.mem i c2 then
+                        if List.mem i c1 && List.mem (-i) c2 then
                           let resolved = resolve i c1 c2 in
                           Error (resolved :: List.append cs1 cs2)
                         else if not (List.mem (-i) c1) then
@@ -75,4 +76,4 @@ let solve ({ n_vars; form }: parsed_instance_data): certificate =
           else cast_var_val tbl.(i)
         in
         Ok (Array.init (n_vars + 1) cast_entry)
-    | Error cs -> Error cs
+    | Error cs -> Error (List.rev cs)

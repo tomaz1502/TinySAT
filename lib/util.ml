@@ -24,6 +24,11 @@ let rec drop_while (p: 'a -> bool) (xs : 'a list) : 'a list =
   | []     -> []
   | x::xs' -> if p x then drop_while p xs' else x::xs'
 
+let rec rem_dups (xs: 'a list): 'a list =
+  match xs with
+    | [] -> []
+    | hd :: tl -> hd :: rem_dups (List.filter (fun x -> x <> hd) tl)
+
 let rec take (i: int) (xs: 'a list): 'a list =
   match xs with
   | [] -> []
@@ -70,16 +75,6 @@ let pp_sat = function
 let print_sat fmt res = 
   Format.fprintf fmt "%s\n" (if Result.is_ok res then "SAT" else "UNSAT")
 
-let print_assignment fmt assignment =
-  Format.fprintf fmt "Assignment:\n";
-  for i = 1 to Array.length assignment - 1 do
-    Format.fprintf fmt "%d -> %s\n" i (if assignment.(i) then "T" else "F");
-  done
-
-let print_cert fmt = function
-  | Ok assignment -> print_assignment fmt assignment
-  | Error _       -> failwith "unimplemented"
-
 let rev_array arr =
   let n = Array.length arr in
   Array.init n (fun i -> arr.(n - i - 1))
@@ -117,3 +112,20 @@ let print_form fmt form =
 let print_input fmt { form; n_vars } =
   Format.fprintf fmt "n_vars = %d\n" n_vars;
   Format.fprintf fmt "form = %a\n" print_form form
+
+let print_assignment fmt assignment =
+  Format.fprintf fmt "SAT\nAssignment:\n";
+  for i = 1 to Array.length assignment - 1 do
+    Format.fprintf fmt "%d -> %s\n" i (if assignment.(i) then "T" else "F");
+  done
+
+let print_drat_clause fmt =
+  List.iter (fun i -> Format.fprintf fmt "%d " i)
+
+let print_drat fmt =
+  Format.fprintf fmt "UNSAT\nDRAT certificate:\n";
+  List.iter (fun c -> Format.fprintf fmt "%a0\n" print_drat_clause c)
+
+let print_cert fmt = function
+  | Ok assignment -> print_assignment fmt assignment
+  | Error cs      -> print_drat fmt cs
