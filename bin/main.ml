@@ -5,7 +5,7 @@ type mode = Parse | Solve | Certify
 type algo = Dpll | Brute_force
 
 let exec_mode = ref Solve
-let chosen_algo = ref Dpll
+let chosen_algo = ref Brute_force
 let input_file = ref ""
 let output_file = ref ""
 let usage_msg = "tinysat <path/to/input> [--output=<path/to/output>] \

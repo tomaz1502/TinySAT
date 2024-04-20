@@ -1,8 +1,8 @@
 (* Implementation of Davis–Putnam–Logemann–Loveland algorithm *)
 
 open Lib.Parsed_struct
-open! Lib.Util
-open Common
+open Lib.Util
+open Certificate
 
 module SI = Set.Make(Int)
 
@@ -11,7 +11,7 @@ type clause = SI.t
 type formula = clause array
 
 type instance_data =
-  { formula: formula
+  { form: formula
   ; n_vars: int
   }
 
@@ -19,7 +19,7 @@ let set_of_arr (arr: literal array): SI.t =
   SI.of_list (Array.to_list arr)
 
 let cast_input (d: parsed_instance_data): instance_data =
-  {formula = Array.map set_of_arr d.formula; n_vars = d.n_vars}
+  {form = Array.map set_of_arr d.form; n_vars = d.n_vars}
 
 let filter (p: 'a -> bool) (arr: 'a array): 'a array =
   let res = ref [] in
@@ -32,7 +32,7 @@ let filter (p: 'a -> bool) (arr: 'a array): 'a array =
 let get_pure_lits (input: instance_data): int list =
   let occ = Array.make (2 * input.n_vars + 1) false in
   let upd l = occ.(l + input.n_vars) <- true in
-  Array.iter (SI.iter upd) input.formula;
+  Array.iter (SI.iter upd) input.form;
   let lits = ref [] in
   for i = input.n_vars downto 1 do
     let occ_pos = if occ.(i + input.n_vars) then true else false in
@@ -64,7 +64,7 @@ let assign (l: literal) (form: formula) (tbl: bool array): formula =
   Array.of_list !res
 
 let rec run (tbl: bool array) (input: instance_data): bool =
-  let form = input.formula in
+  let form = input.form in
   let n_vars = input.n_vars in
   if Array.length form = 0 then true
   else if Array.mem SI.empty form then false
@@ -79,7 +79,7 @@ let rec run (tbl: bool array) (input: instance_data): bool =
           if Array.mem SI.empty form then false
           else
             let new_form = filter (fun c -> SI.is_empty (SI.inter c u_lits_set)) form in
-            run tbl { formula = new_form; n_vars = n_vars }
+            run tbl { form = new_form; n_vars = n_vars }
       | [] -> begin
         match get_pure_lits input with
           | _::_ as p_lits -> 
@@ -88,18 +88,18 @@ let rec run (tbl: bool array) (input: instance_data): bool =
               let rem_set = SI.of_list p_lits in
               let new_form =
                 filter (fun c -> SI.is_empty (SI.inter c rem_set)) form in
-              run tbl { formula = new_form; n_vars = n_vars }
+              run tbl { form = new_form; n_vars = n_vars }
           | [] ->
               (* Backtracking *)
               let l = SI.min_elt form.(0) in
               let try_pos =
-                run tbl { formula = assign l form tbl; n_vars = n_vars } in
+                run tbl { form = assign l form tbl; n_vars = n_vars } in
               if try_pos then true
               else
-                run tbl { formula = assign (-l) form tbl; n_vars = n_vars }
+                run tbl { form = assign (-l) form tbl; n_vars = n_vars }
       end
 
-let solve (pf: parsed_instance_data): output =
+let solve (pf: parsed_instance_data): certificate =
   let tbl = Array.make (pf.n_vars + 1) false in
   let sat = cast_input pf |> run tbl in
-  if sat then Ok tbl else Error ()
+  if sat then Ok tbl else Error []

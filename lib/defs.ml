@@ -30,7 +30,7 @@ module I_arr_arr: Formula =
     type clause = literal array
     type t = clause array
 
-    let cast_parsed_input inp = inp.formula
+    let cast_parsed_input inp = inp.form
     let get_clause = Array.unsafe_get
     let get_lit = Array.unsafe_get
     let form_len = Array.length

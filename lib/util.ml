@@ -94,10 +94,10 @@ let pp_form form =
   List.map (fun c -> "( " ^ pp_clause c ^ " )") |>
   String.concat " ^ "
 
-let pp_input { formula; n_vars } =
+let pp_input { form; n_vars } =
   String.concat "\n"
   [ "n_vars = " ^ (string_of_int n_vars)
-  ; "form = " ^ (pp_form formula)
+  ; "form = " ^ (pp_form form)
   ]
 
 let print_clause fmt c =
@@ -114,6 +114,6 @@ let print_form fmt form =
     Format.fprintf fmt " ^ (%a)" print_clause form.(i);
   done
 
-let print_input fmt { formula; n_vars } =
+let print_input fmt { form; n_vars } =
   Format.fprintf fmt "n_vars = %d\n" n_vars;
-  Format.fprintf fmt "form = %a\n" print_form formula
+  Format.fprintf fmt "form = %a\n" print_form form

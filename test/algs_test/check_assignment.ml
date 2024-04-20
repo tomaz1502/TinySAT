@@ -1,5 +1,5 @@
 open Lib.Parsed_struct;;
-open Algs.Common;;
+open Algs.Certificate;;
 
 let check_assignment (input: parsed_instance_data) (assignment: assignment): bool =
   let check_lit lit =
@@ -8,4 +8,4 @@ let check_assignment (input: parsed_instance_data) (assignment: assignment): boo
     else assignment.(lit) = true
   in
   let check_clause = Array.exists check_lit in
-  Array.for_all check_clause input.formula
+  Array.for_all check_clause input.form

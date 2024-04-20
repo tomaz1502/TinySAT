@@ -28,7 +28,7 @@ let dimacs_from_string (input : string) : (parsed_instance_data, string) result 
         List.map (List.map int_of_string')
       in
       Ok
-        { formula    = Array.of_list (List.map Array.of_list clauses)
-        ; n_vars     = n_vars
+        { form   = Array.of_list (List.map Array.of_list clauses)
+        ; n_vars = n_vars
         } 
     with UnexpectedInput -> Error "unexpected input"

@@ -1,4 +1,4 @@
 open Lib.Parsed_struct
-open Common
+open Certificate
 
-val solve: parsed_instance_data -> output
+val solve: parsed_instance_data -> certificate

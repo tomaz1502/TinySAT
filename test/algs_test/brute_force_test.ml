@@ -17,7 +17,7 @@ let sat_test_from_instance_name i_name =
 let unsat_test_from_instance_name i_name =
   let input = read_file ("../test_cases/unsat/" ^ i_name) in
   match dimacs_from_string input with
-    | Ok dimacs -> Result.is_error (Dpll.solve dimacs)
+    | Ok dimacs -> Result.is_error (Brute_force.solve dimacs)
     | _ -> false
 
 let%test "SAT certificate for sat1.dimacs" =
