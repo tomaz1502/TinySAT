@@ -16,8 +16,10 @@ let check_unsat_proof (input: parsed_instance) (cert: proof_cert): bool =
   let fold_fun acc step =
     match step with
       | InputClause _ -> acc
-      | Resolution { resolvant; c1_idx; c2_idx; _ } ->
+      | Resolution { new_clause; new_clause_idx; resolvant; c1_idx; c2_idx } ->
+          assert (new_clause_idx = Array.length acc + 1);
           let resolved = resolve resolvant acc.(c1_idx - 1) acc.(c2_idx - 1) in
+          assert (resolved = new_clause);
           Array.append acc [|resolved|]
   in
   let input_form_list = Array.map (Array.to_list) input.form in
