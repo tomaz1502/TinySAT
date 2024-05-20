@@ -4,8 +4,19 @@
 
 type assignment = bool array
 
-type drat_clause = int list
+type proof_step =
+  | Resolution of
+      { new_clause: int list
+      ; new_clause_idx: int
+      ; c1_idx: int
+      ; c2_idx: int
+      ; resolvant: int
+      }
+  | InputClause of int list * int
 
-type drat_cert = drat_clause list
+type proof_cert =
+  { proof: proof_step list
+  ; added_clauses: int
+  }
 
-type certificate = (assignment, drat_cert) result
+type certificate = (assignment, proof_cert) result

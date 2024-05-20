@@ -25,11 +25,14 @@ let pp_input { form; n_vars } =
   ]
 
 let print_clause fmt c =
-  if Array.length c > 0 then
+  if Array.length c > 0 then begin
     Format.fprintf fmt "%d" c.(0);
-  for i = 1 to Array.length c - 1 do
-    Format.fprintf fmt " v %d" c.(i)
-  done
+    for i = 1 to Array.length c - 1 do
+      Format.fprintf fmt " v %d" c.(i)
+    done
+  end
+  else
+    Format.fprintf fmt "<empty>"
 
 let print_form fmt form =
   if Array.length form > 0 then
@@ -48,13 +51,22 @@ let print_assignment fmt assignment =
     Format.fprintf fmt "%d -> %s\n" i (if assignment.(i) then "T" else "F");
   done
 
-let print_proof_step _fmt = function
-  Resolution _ -> failwith "to do"
+let print_proof_step fmt = function
+  | Resolution r ->
+      Format.fprintf fmt
+        "%d: %a (Resolution of clauses %d and %d with %d as pivot)\n"
+        r.new_clause_idx
+        print_clause (Array.of_list r.new_clause)
+        r.c1_idx
+        r.c2_idx
+        r.resolvant
+  | InputClause _ -> ()
 
-let print_proof_cert fmt =
+let print_proof_cert fmt cert =
   Format.fprintf fmt "UNSAT\nProof certificate:\n";
-  List.iter (fun c -> Format.fprintf fmt "%a0\n" print_proof_step c)
+  List.iter (fun step -> Format.fprintf fmt "%a" print_proof_step step) cert.proof;
+  Format.fprintf fmt "\n"
 
 let print_cert fmt = function
   | Ok assignment -> print_assignment fmt assignment
-  | Error cs      -> print_proof_cert fmt cs
+  | Error cert    -> print_proof_cert fmt cert

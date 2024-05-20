@@ -102,4 +102,4 @@ let rec run (tbl: bool array) (input: instance_data): bool =
 let solve (pf: parsed_instance_data): certificate =
   let tbl = Array.make (pf.n_vars + 1) false in
   let sat = cast_input pf |> run tbl in
-  if sat then Ok tbl else Error []
+  if sat then Ok tbl else Error ({proof = []; added_clauses = 0})
