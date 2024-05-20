@@ -1,5 +1,6 @@
 open Lib.Util
 open Lib.Parser
+open Algs.Printers
 
 type mode = Parse | Solve | Certify
 type algo = Dpll | Brute_force
