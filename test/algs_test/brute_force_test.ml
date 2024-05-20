@@ -2,7 +2,7 @@ open Algs;;
 open Lib.Parser;;
 open Lib.Util;;
 
-open Check_assignment;;
+open Checkers;;
 
 let sat_test_from_instance_name i_name =
   let input = read_file ("../test_cases/sat/" ^ i_name) in
@@ -17,7 +17,11 @@ let sat_test_from_instance_name i_name =
 let unsat_test_from_instance_name i_name =
   let input = read_file ("../test_cases/unsat/" ^ i_name) in
   match dimacs_from_string input with
-    | Ok dimacs -> Result.is_error (Brute_force.solve dimacs)
+    | Ok dimacs -> begin
+        match Brute_force.solve dimacs with
+          | Ok _ -> false
+          | Error cert -> check_unsat_proof dimacs cert
+    end
     | _ -> false
 
 let%test "SAT certificate for sat1.dimacs" =

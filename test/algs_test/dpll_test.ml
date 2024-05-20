@@ -2,7 +2,7 @@ open Algs;;
 open Lib.Parser;;
 open Lib.Util;;
 
-open Check_assignment;;
+open Checkers;;
 
 let sat_test_from_instance_name i_name =
   let input = read_file ("../test_cases/sat/" ^ i_name) in

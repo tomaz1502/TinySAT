@@ -1,6 +1,5 @@
 (* Either Ok with the satisfying assignment or
    Err with the proof certificate of unsatisfiability *)
-(* type output = (bool array, unsat_certificate) result *)
 
 type assignment = bool array
 
@@ -20,3 +19,13 @@ type proof_cert =
   }
 
 type certificate = (assignment, proof_cert) result
+
+val clause_of_proof_step : proof_step -> int list
+
+val clause_index_of_proof_step : proof_step -> int
+
+val mkResolution : int list -> int -> int -> int -> int -> proof_step
+
+val mkProofCert : proof_step list -> int -> proof_cert
+
+val resolve : int -> int list -> int list -> int list

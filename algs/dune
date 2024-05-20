@@ -1,5 +1,4 @@
 (library
  (name Algs)
  (libraries Lib)
- (modules_without_implementation Certificate)
 )
