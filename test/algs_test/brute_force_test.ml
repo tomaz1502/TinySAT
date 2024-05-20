@@ -40,3 +40,6 @@ let%test "UNSAT for unsat1.dimacs" =
 
 let%test "UNSAT for handcraft1.dimacs" =
   unsat_test_from_instance_name "handcraft1.dimacs"
+
+let%test "UNSAT for drat_example.dimacs" =
+  unsat_test_from_instance_name "drat_example.dimacs"
