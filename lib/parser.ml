@@ -11,7 +11,7 @@ let int_of_string' s =
       Printf.printf "int_of_string failed for: %s\n" s;
       raise e
 
-let dimacs_from_string (input : string) : (parsed_instance_data, string) result =
+let dimacs_from_string (input : string) : (parsed_instance, string) result =
   let lines = String.split_on_char '\n' input in
   let lines = List.filter (comp not (String.starts_with ~prefix:"c")) lines in
   match lines with

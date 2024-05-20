@@ -6,7 +6,7 @@ module type Formula =
     type clause
     type t
 
-    val cast_parsed_input : parsed_instance_data -> t
+    val cast_parsed_input : parsed_instance -> t
     val get_clause : t -> int -> clause
     val get_lit : clause -> int -> literal
     val form_len : t -> int

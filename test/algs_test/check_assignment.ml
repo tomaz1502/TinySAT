@@ -1,7 +1,7 @@
 open Lib.Parsed_struct;;
 open Algs.Certificate;;
 
-let check_assignment (input: parsed_instance_data) (assignment: assignment): bool =
+let check_assignment (input: parsed_instance) (assignment: assignment): bool =
   let check_lit lit =
     if lit < 0 then
       assignment.(-lit) = false

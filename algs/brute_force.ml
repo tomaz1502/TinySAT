@@ -6,7 +6,7 @@ type clause = literal list
 
 type formula = clause list
 
-type _instance_data = parsed_instance_data
+type _instance_data = parsed_instance
 
 type var_val = True | False | Unassigned
 
@@ -50,7 +50,7 @@ let resolve (r: literal) (c1: clause) (c2: clause) : clause =
   let c2' = List.filter (fun l -> l <> -r) c2 in
   rem_dups (List.append c1' c2')
 
-let solve ({ n_vars; form }: parsed_instance_data): certificate =
+let solve ({ n_vars; form }: parsed_instance): certificate =
   let form_list = Array.to_list (Array.map Array.to_list form) in
   let n_clauses = Array.length form in
   (* n_clauses = number of clauses (initial + added) before running this node *)

@@ -4,7 +4,7 @@ type parsed_clause = literal array
 
 type parsed_formula = parsed_clause array
 
-type parsed_instance_data =
+type parsed_instance =
   { form    : parsed_formula
   ; n_vars  : int
   }

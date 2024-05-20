@@ -18,7 +18,7 @@ type instance_data =
 let set_of_arr (arr: literal array): SI.t =
   SI.of_list (Array.to_list arr)
 
-let cast_input (d: parsed_instance_data): instance_data =
+let cast_input (d: parsed_instance): instance_data =
   {form = Array.map set_of_arr d.form; n_vars = d.n_vars}
 
 let filter (p: 'a -> bool) (arr: 'a array): 'a array =
@@ -99,7 +99,7 @@ let rec run (tbl: bool array) (input: instance_data): bool =
                 run tbl { form = assign (-l) form tbl; n_vars = n_vars }
       end
 
-let solve (pf: parsed_instance_data): certificate =
+let solve (pf: parsed_instance): certificate =
   let tbl = Array.make (pf.n_vars + 1) false in
   let sat = cast_input pf |> run tbl in
   if sat then Ok tbl else Error ({proof = []; added_clauses = 0})
