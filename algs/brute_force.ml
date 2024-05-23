@@ -67,7 +67,7 @@ let solve ({ n_vars; form }: parsed_instance): certificate =
                             mkProofCert (step :: List.append cert2.proof cert1.proof) added_clauses
                           in
                           Error pf_cert
-                        else if not (List.mem (-i) c1_clause) then
+                        else if not (List.mem i c1_clause) then
                           Error cert1
                         else Error cert2
           end
