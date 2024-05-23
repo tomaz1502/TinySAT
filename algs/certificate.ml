@@ -20,12 +20,8 @@ type proof_cert =
 type certificate = (assignment, proof_cert) result
 
 let clause_of_proof_step = function
-  | Resolution r -> r.new_clause
-  | InputClause (c, _) -> c
-
-let clause_index_of_proof_step = function
-  | Resolution r -> r.new_clause_idx
-  | InputClause (_, i) -> i
+  | Resolution r -> (r.new_clause_idx, r.new_clause)
+  | InputClause (c, i) -> (i, c)
 
 let mkResolution new_clause new_clause_idx c1_idx c2_idx resolvant =
   Resolution

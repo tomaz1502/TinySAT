@@ -20,9 +20,7 @@ type proof_cert =
 
 type certificate = (assignment, proof_cert) result
 
-val clause_of_proof_step : proof_step -> int list
-
-val clause_index_of_proof_step : proof_step -> int
+val clause_of_proof_step : proof_step -> (int * int list)
 
 val mkResolution : int list -> int -> int -> int -> int -> proof_step
 

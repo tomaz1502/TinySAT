@@ -51,23 +51,21 @@ let solve ({ n_vars; form }: parsed_instance): certificate =
                     | Error cert2 ->
                         tbl.(i) <- Unassigned;
                         (* These lists are always non-empty *)
-                        let c1 = List.hd cert1.proof in
-                        let c2 = List.hd cert2.proof in
-                        let c1_clause = clause_of_proof_step c1 in
-                        let c2_clause = clause_of_proof_step c2 in
-                        let c1_idx = clause_index_of_proof_step c1 in
-                        let c2_idx = clause_index_of_proof_step c2 in
-                        if List.mem i c1_clause && List.mem (-i) c2_clause then
-                          let resolved = resolve i c1_clause c2_clause in
+                        let pf_left = List.hd cert1.proof in
+                        let pf_right = List.hd cert2.proof in
+                        let (cl_idx_pf_left, cl_pf_left) = clause_of_proof_step pf_left in
+                        let (cl_idx_pf_right, cl_pf_right) = clause_of_proof_step pf_right in
+                        if List.mem i cl_pf_left && List.mem (-i) cl_pf_right then
+                          let resolved = resolve i cl_pf_left cl_pf_right in
                           let added_clauses = cert1.added_clauses + cert2.added_clauses + 1 in
                           let step =
-                            mkResolution resolved (n_clauses + added_clauses) c1_idx c2_idx i
+                            mkResolution resolved (n_clauses + added_clauses) cl_idx_pf_left cl_idx_pf_right i
                           in
                           let pf_cert =
                             mkProofCert (step :: List.append cert2.proof cert1.proof) added_clauses
                           in
                           Error pf_cert
-                        else if not (List.mem i c1_clause) then
+                        else if not (List.mem i cl_pf_left) then
                           Error cert1
                         else Error cert2
           end
