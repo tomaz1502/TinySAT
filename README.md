@@ -8,7 +8,7 @@ A tiny proof producing SAT solver.
   - [x] Implement DPLL.
   - [x] Tests
     + Add more tests. Also will need tests for unsat results.
-  - [ ] Produce proofs in the brute force search.
+  - [x] Produce proofs in the brute force search.
   - [ ] Produce proofs in DPLL.
   - [ ] Add more algorithms. Ideas: BDD, CDCL.
   - [ ] Conversion to CNF.
